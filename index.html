@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASF Vento — Vento ao Vivo nas Praias</title>
+<meta name="description" content="Vento, direção e temperatura ao vivo nas praias do litoral norte de SP. Satélite do app ASF.">
+<style>:root{--p:#00a8cc;--pd:#0e2439;--g:#f4d03f}*{box-sizing:border-box;margin:0}body{font-family:system-ui,sans-serif;background:#f6fbfd;color:var(--pd)}nav{background:var(--pd);padding:9px 12px;display:flex;flex-wrap:wrap;gap:6px}nav a{color:#fff;text-decoration:none;font-size:11px;font-weight:600;padding:4px 8px;border-radius:20px;background:rgba(255,255,255,.08)}nav a.hub{background:var(--g);color:var(--pd)}header{padding:32px 20px;text-align:center;background:linear-gradient(135deg,#27ae6018,#00a8cc18)}h1{font-size:25px}main{max-width:760px;margin:20px auto;padding:0 16px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.06)}.card h3{font-size:15px}.big{font-size:30px;font-weight:800;color:var(--p)}.badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;margin-top:8px}.boa{background:#E3F8EF;color:#0B8A5F}.ok{background:#FFF6E0;color:#9A6B00}.ruim{background:#FDE8E8;color:#B42318}.arrow{display:inline-block;font-size:22px}.muted{color:#678;font-size:12px}footer{text-align:center;padding:26px;font-size:12px;color:#678}</style>
+</head>
+<body>
+<nav>
+<a class="hub" href="https://acarolmourad-commits.github.io/asf-app/">🏄‍♀️ ASF App</a>
+<a href="https://acarolmourad-commits.github.io/asf-previsao/">🌊</a><a href="https://acarolmourad-commits.github.io/asf-mare/">🌙</a><a href="https://acarolmourad-commits.github.io/asf-atlas/">🗺️</a><a href="https://acarolmourad-commits.github.io/asf-yoga/">🧘‍♀️</a><a href="https://acarolmourad-commits.github.io/asf-praias/">🏖️</a><a href="https://acarolmourad-commits.github.io/asf-mala/">🎒</a><a href="https://acarolmourad-commits.github.io/asf-sos/">🆘</a><a href="https://acarolmourad-commits.github.io/asf-leitura/">👁️</a><a href="https://acarolmourad-commits.github.io/asf-treino/">💪</a><a href="https://acarolmourad-commits.github.io/asf-popup/">⏱️</a><a href="https://acarolmourad-commits.github.io/asf-desafio/">🗓️</a><a href="https://acarolmourad-commits.github.io/asf-eventos/">📅</a><a href="https://acarolmourad-commits.github.io/asf-glossario/">📖</a><a href="https://acarolmourad-commits.github.io/asf-memoria/">🧩</a><a href="https://acarolmourad-commits.github.io/asf-manobras/">🤸</a><a href="https://acarolmourad-commits.github.io/asf-comunidade/">💜</a><a href="https://acarolmourad-commits.github.io/asf-seguranca/">🛟</a><a href="https://acarolmourad-commits.github.io/asf-bemestar/">🧘</a><a href="https://acarolmourad-commits.github.io/asf-quiz/">🧠</a><a href="https://acarolmourad-commits.github.io/asf-equipamento/">🏄</a><a href="https://acarolmourad-commits.github.io/asf-nutricao/">🥑</a><a href="https://acarolmourad-commits.github.io/asf-viagens/">✈️</a><a href="https://acarolmourad-commits.github.io/asf-historia/">📜</a><a href="https://acarolmourad-commits.github.io/asf-diario/">📓</a><a href="https://acarolmourad-commits.github.io/asf-respira/">🫁</a><a href="https://acarolmourad-commits.github.io/asf-volume/">📐</a>
+</nav>
+<header><h1>💨 ASF Vento</h1><p class="muted">Terral de manhã é ouro: vento fraco e offshore deixa a onda perfeita</p></header>
+<main>
+<div class="grid" id="grid"><p class="muted">Carregando ventos…</p></div>
+<p class="muted" style="text-align:center;margin-top:14px">Fonte: Open-Meteo • Combine com <a href="https://acarolmourad-commits.github.io/asf-previsao/">Previsão</a> (ondas) e <a href="https://acarolmourad-commits.github.io/asf-mare/">Maré</a> (janela do dia).</p>
+</main>
+<footer>Parte da constelação ASF • <a href="https://acarolmourad-commits.github.io/asf-app/">Voltar ao app principal</a></footer>
+<script>
+const praias=[['Praia da Baleia',-23.78,-45.67],['Maresias',-23.82,-45.56],['Juquehy',-23.74,-45.52],['Itamambuca',-23.40,-45.00]];
+const dirs=['N','NE','L','SE','S','SO','O','NO'];
+const grid=document.getElementById('grid');grid.innerHTML='';
+Promise.all(praias.map(([n,la,lo])=>fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&current=wind_speed_10m,wind_direction_10m,temperature_2m&timezone=America%2FSao_Paulo`).then(r=>r.json()).then(m=>({n,m})).catch(()=>null))).then(rs=>{
+rs.forEach(r=>{if(!r)return;const w=r.m.current.wind_speed_10m,dir=r.m.current.wind_direction_10m,t=r.m.current.temperature_2m;
+// offshore (bom) = vento de terra: para o litoral de SP, ventos de N/O/NO
+const dName=dirs[Math.round(dir/45)%8];
+const offshore=['N','NO','O'].includes(dName);
+const cls=w<10&&offshore?'boa':w<18?'ok':'ruim';
+const lbl=w<10&&offshore?'offshore clássico 🏆':w<10?'fraco — vidro possível':w<18?'moderado':'forte — mar picado';
+grid.insertAdjacentHTML('beforeend',`<div class="card"><h3>${r.n}</h3><div class="big">${w.toFixed(0)} km/h <span class="arrow" style="transform:rotate(${dir+180}deg)">⬆</span></div><div class="muted">${dName} • 🌡️ ${t.toFixed(0)}°C</div><span class="badge ${cls}">${lbl}</span></div>`)});
+if(!grid.children.length)grid.innerHTML='<p class="muted">Não foi possível carregar agora.</p>';});
+</script>
+</body>
+</html>
